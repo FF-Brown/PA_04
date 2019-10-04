@@ -35,7 +35,8 @@ int main(void)
 	//Gameplay
 	game_start:
 	display_menu(funds);
-	player_count = game_intro();
+	if(funds[0] == 0)
+		player_count = game_intro();
 	starting_funds = funds_def();
 	funds_reset(funds, starting_funds);
 
