@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void display_menu(void);
+void display_menu(int funds[]);
 void game_rules(void);
 void funds_menu(void);
 void funds_view(void);

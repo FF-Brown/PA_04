@@ -17,9 +17,10 @@
 	Preconditions: None
 	Postconditions: Secondary menu displayed, playing game, or exited program.
 */
-void display_menu(void)
+void display_menu(int funds[])
 {
 	int option = 0;
+	int money = 0;
 	//Display menu until receiving valid input
 	while (option < 1 || option > 4)
 	{
@@ -36,11 +37,12 @@ void display_menu(void)
 		{
 		case RULES:
 			game_rules();
-			display_menu();
+			display_menu(funds);
 			break;
 		case FUNDS:
-			funds_menu();
-			display_menu();
+			money = funds_def();
+			funds_reset(funds, money);
+			display_menu(funds);
 			break;
 			//Leave switch and while loop to begin playing game
 		case PLAY:
@@ -159,27 +161,6 @@ void funds_reset(int funds[], int starting_funds)
 	funds[2] = starting_funds;
 	funds[3] = starting_funds;
 	funds[4] = starting_funds;
-	//char option = '\0';
-	////Display current funds value and option to reset.
-	//funds_view();
-	//while ('y' != option && 'n' != option)
-	//{
-	//	printf("Reset funds for all players? (y/n)\n");
-	//	scanf(" %c", &option);
-	//	if ('y' == option)
-	//	{
-	//		FILE* iofile = NULL;
-	//		iofile = fopen("funds.dat", "w");
-	//		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS);
-	//		fclose(iofile);
-	//	}
-	//	else if (option == 'n')
-	//		printf("Funds remain unchanged.\n");
-	//	else
-	//	{
-	//		printf("Invalid input.\n");
-	//	}
-	//}
 }
 /*
 	Function: funds_def()
@@ -193,24 +174,7 @@ void funds_reset(int funds[], int starting_funds)
 */
 int funds_def(void)
 {
-	//char option = '\0';
 	int new_def = 0;
-	//printf("Display default funds value and option to edit.\n");
-	//printf("By default, players begin the game with $%d\n", DEFAULT_FUNDS);
-	//while (option != 'y' && option != 'n')
-	//{
-	//	printf("Would you like to adjust the starting amount? (y/n)\n");
-	//	scanf(" %c", &option);
-	//	if ('y' == option)
-	//	{
-	//		printf("New starting amount: $");
-	//		scanf("%d", &new_def);
-	//	}
-	//	else if ('n' == option)
-	//		printf("Starting amount remains unchanged.\n");
-	//	else
-	//		printf("Invalid input.\n");
-	//}
 
 	while (new_def < 1)
 	{
@@ -309,94 +273,6 @@ bool bet_check(int current_bet, int player_funds)
 	return validity;
 }
 /*
-	Function: turn_flow()
-	Date Created: 10/01/2019
-	Last Modified: 10/02/2019 Massive overhaul
-	Description: Controls each player's turn flow. Does most of the function calling. This allows for the repetition of the order of actions without errors or variance.
-	Input parameters: Player number (int), player funds (int)
-	Returns: None (pointers used due to multiple return values)
-	Preconditions: Number of players established, funds available
-	Postconditions: One turn completed. Bet total, roll sum, and updated funds for player returned.
-*/
-void turn_flow(int player_number, int player_funds, int* bets, int* rolls, int* funds)
-{
-	int bet_total = 0, current_bet = 0;
-	int single_die = 0;
-	int roll_sum = 0;
-	char cont = 'y';
-	bool check = false;
-
-	//Get inital bet (mandatory) and run bet_check(). Add bet to total, subtract from funds.
-	printf("\nBest of luck, Player %d!\n", player_number);
-	while (check == false)
-	{
-		current_bet = bet_initial();
-		check = bet_check(current_bet, player_funds);
-		if (check == false)
-			printf("You do not have enough money. Please place a lower bet.\n");
-	}
-	check = false;
-	bet_total += current_bet;
-	player_funds -= current_bet;
-
-	//First roll. Simplified version of subsequent rolls.
-	single_die = roll_die();
-	roll_sum = single_die;
-	printf("You rolled a %d. ", single_die);
-	printf("You are at %d.\n", roll_sum);
-
-	while (cont == 'y')
-	{
-		//Offer to take a bet. Call check_bet(). Add to bet_total and subtract from player_funds
-		while (!check)
-		{
-			current_bet = bet_sub();
-			check = bet_check(current_bet, player_funds);
-			if (!check)
-				printf("You do not have enough money. Please place a lower bet.\n");
-		}
-		check = false;
-		bet_total += current_bet;
-		player_funds -= current_bet;
-
-		//Roll die. Add to sum. If 16+, offer to stop rolling.
-		single_die = roll_die();
-		roll_sum += single_die;
-		printf("You rolled a %d. ", single_die);
-		if (21 == roll_sum)
-		{
-			printf("Congratulations! You have rolled a perfect 21!\n");
-			cont = 'n';
-		}
-		else if (roll_sum > 21)
-		{
-			printf("Sorry! You went over 21. You lose!\n");
-			cont = 'n';
-		}
-		else if (roll_sum >= 16)
-		{
-			do
-			{
-				printf("You are at %d and may choose to end your turn. Would you like to continue rolling? (y/n)\n", roll_sum);
-				scanf(" %c", &cont);
-				if (cont != 'y' && cont != 'n')
-					printf("Invalid entry.\n");
-			} while (cont != 'y' && cont != 'n');
-
-		}
-		else
-			printf("You are at %d.\n", roll_sum);
-
-	}
-	//Return bet total, roll sum, player funds
-	*bets = bet_total;
-	*rolls = roll_sum;
-	*funds = player_funds;
-	//printf("Total roll count: %d\n", roll_sum);
-	//printf("Total bet: %d\n", bet_total);
-	//printf("Total remaining funds: %d\n", player_funds);
-}
-/*
 	Function: roll_die()
 	Date Created: 10/01/2019
 	Last Modified:
@@ -408,7 +284,7 @@ void turn_flow(int player_number, int player_funds, int* bets, int* rolls, int* 
 */
 int roll_die(void)
 {
-	int roll = 3;//rand() % 6 + 1;
+	int roll = rand() % 6 + 1;
 	return roll;
 }
 /*
