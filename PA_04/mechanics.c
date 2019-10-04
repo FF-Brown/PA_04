@@ -138,11 +138,11 @@ void funds_view(void)
 	fclose(iofile);
 
 	printf("\nCurrently, players have the following amounts of money:\n\n");
-	printf("Player 1: %d\n", player1);
-	printf("Player 2: %d\n", player2);
-	printf("Player 3: %d\n", player3);
-	printf("Player 4: %d\n", player4);
-	printf("Player 5: %d\n", player5);
+	printf("Player 1: $%d\n", player1);
+	printf("Player 2: $%d\n", player2);
+	printf("Player 3: $%d\n", player3);
+	printf("Player 4: $%d\n", player4);
+	printf("Player 5: $%d\n", player5);
 }
 /*
 	Function: funds_reset()
@@ -178,7 +178,7 @@ int funds_def(void)
 
 	while (new_def < 1)
 	{
-		printf("How much money would you like players to start with?\n");
+		printf("How much money would you like players to start with?\n$");
 		scanf("%d", &new_def);
 		if (new_def < 1)
 			printf("Invalid input.\n");
@@ -216,7 +216,7 @@ int bet_initial(void)
 	int bet = 0;
 	while (bet < 1)
 	{
-		printf("How much would you like to bet?\n");
+		printf("How much would you like to bet?\n$");
 		scanf("%d", &bet);
 		if (bet < 1)
 			printf("Invalid entry.\n");
@@ -236,14 +236,14 @@ int bet_initial(void)
 int bet_sub(void)
 {
 	int bet = 0;
-	printf("How much would you like to bet? You may choose to bet $0.\n");
+	printf("How much would you like to bet? You may choose to bet $0.\n$");
 	scanf("%d", &bet);
 	if (bet < 0)
 	{
 		printf("Invalid entry.\n");
 		while (bet < 0)
 		{
-			printf("How much would you like to bet? You may choose to bet $0.\n");
+			printf("How much would you like to bet? You may choose to bet $0.\n$");
 			scanf("%d", &bet);
 			if (bet < 0)
 				printf("Invalid entry.\n");

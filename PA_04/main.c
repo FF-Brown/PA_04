@@ -108,8 +108,8 @@ int main(void)
 		}
 
 		printf("Total roll count: %d\n", rolls[i]);
-		printf("Total bet: %d\n", bets[i]);
-		printf("Total remaining funds: %d\n", funds[i]);
+		printf("Total bet: $%d\n", bets[i]);
+		printf("Total remaining funds: $%d\n", funds[i]);
 	}
 
 	//At this point, game is over.
@@ -196,7 +196,7 @@ int main(void)
 		}
 		winnings = bets[one_win - 1] * multiplier[one_win - 1];
 		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win - 1]);
-		printf("Since you bet %d, you win $%d!\n", bets[one_win - 1], winnings);
+		printf("Since you bet $%d, you win $%d!\n", bets[one_win - 1], winnings);
 		funds[one_win - 1] += winnings;
 	}
 
