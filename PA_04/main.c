@@ -33,17 +33,17 @@ int main(void)
 	srand(time(NULL));
 
 	//Gameplay
+	game_start:
 	display_menu();
 	player_count = game_intro();
 	starting_funds = funds_def();
 	funds_reset(funds, starting_funds);
 
 	//Repeat once for each player
-	for (int i = 0; i <= player_count; i++)
+	for (int i = 0; i < player_count; i++)
 	{
-		
 		//Get inital bet (mandatory) and run bet_check(). Add bet to total, subtract from funds.
-		printf("\nBest of luck, Player %d!\n", i);
+		printf("\nBest of luck, Player %d!\n", i+1);
 		while (check == false)
 		{
 			current_bet = bet_initial();
@@ -61,6 +61,7 @@ int main(void)
 		printf("You rolled a %d. ", single_die);
 		printf("You are at %d.\n", rolls[i]);
 
+		cont = 'y';
 		while (cont == 'y')
 		{
 			//Offer to take a bet. Call check_bet(). Add to bet_total and subtract from player_funds
@@ -187,12 +188,15 @@ int main(void)
 		for (int i = 0; i < 5; i++)
 		{
 			if (multiplier[i] > 0)
+			{
 				one_win = i + 1;
+				break;
+			}
 		}
-		winnings = bets[one_win] * multiplier[one_win];
-		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win]);
-		printf("Since you bet %d, you win $%d!\n", bets[one_win], winnings);
-		funds[one_win] += winnings;
+		winnings = bets[one_win - 1] * multiplier[one_win - 1];
+		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win - 1]);
+		printf("Since you bet %d, you win $%d!\n", bets[one_win - 1], winnings);
+		funds[one_win - 1] += winnings;
 	}
 
 
@@ -207,9 +211,9 @@ int main(void)
 	while (play_again != 'y' && play_again != 'n')
 	{
 		printf("Would you like to play again? (y/n)\n");
-		scanf("%d", &play_again);
+		scanf(" %c", &play_again);
 		if (play_again == 'y')
-			display_menu();
+			goto game_start;
 		else if (play_again == 'n')
 			exit(0);
 		else

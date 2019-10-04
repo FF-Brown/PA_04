@@ -408,7 +408,7 @@ void turn_flow(int player_number, int player_funds, int* bets, int* rolls, int* 
 */
 int roll_die(void)
 {
-	int roll = rand() % 6 + 1;
+	int roll = 3;//rand() % 6 + 1;
 	return roll;
 }
 /*
@@ -487,7 +487,7 @@ int max_roll(int rolls[])
 	int max = rolls[0];
 	for (int i = 1; i < 5; i++)
 	{
-		if (rolls[i] > max)
+		if (rolls[i] > max && rolls[i] <= 21)
 			max = rolls[i];
 	}
 	return max;
