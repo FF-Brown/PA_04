@@ -13,7 +13,7 @@ int main(void)
 	int die_roll = 0;
 	int bet_p1 = 0, bet_p2 = 0, bet_p3 = 0, bet_p4 = 0, bet_p5 = 0;
 	char cont = 'y';
-	int funds[5] = { DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS };
+	int funds[5] = { 0 };
 	int bets[5] = { 0, 0, 0, 0, 0 };
 	int rolls[5] = { 0, 0, 0, 0, 0 };
 	int winner[5] = { 0, 0, 0, 0, 0 };
@@ -24,16 +24,87 @@ int main(void)
 	int one_win = 0;
 	int tie[5] = { 0, 0, 0, 0, 0 };
 	int winnings = 0;
+	int starting_funds = 0;
+	int bet_total = 0, current_bet = 0;
+	int single_die = 0;
+	int roll_sum = 0;
+	bool check = false;
 
 	srand(time(NULL));
 
 	//Gameplay
 	display_menu();
 	player_count = game_intro();
+	starting_funds = funds_def();
+	funds_reset(funds, starting_funds);
 
-	for (int i = PLAYER1; i <= player_count; i++)
+	//Repeat once for each player
+	for (int i = 0; i <= player_count; i++)
 	{
-		turn_flow(i, funds[i - 1], &bets[i - 1], &rolls[i - 1], &funds[i - 1]);
+		
+		//Get inital bet (mandatory) and run bet_check(). Add bet to total, subtract from funds.
+		printf("\nBest of luck, Player %d!\n", i);
+		while (check == false)
+		{
+			current_bet = bet_initial();
+			check = bet_check(current_bet, funds[i]);
+			if (check == false)
+				printf("You do not have enough money. Please place a lower bet.\n");
+		}
+		check = false;
+		bets[i] += current_bet;
+		funds[i] -= current_bet;
+
+		//First roll. Simplified version of subsequent rolls.
+		single_die = roll_die();
+		rolls[i] = single_die;
+		printf("You rolled a %d. ", single_die);
+		printf("You are at %d.\n", rolls[i]);
+
+		while (cont == 'y')
+		{
+			//Offer to take a bet. Call check_bet(). Add to bet_total and subtract from player_funds
+			while (!check)
+			{
+				current_bet = bet_sub();
+				check = bet_check(current_bet, funds[i]);
+				if (!check)
+					printf("You do not have enough money. Please place a lower bet.\n");
+			}
+			check = false;
+			bets[i] += current_bet;
+			funds[i] -= current_bet;
+
+			//Roll die. Add to sum. If 16+, offer to stop rolling.
+			single_die = roll_die();
+			rolls[i] += single_die;
+			printf("You rolled a %d. ", single_die);
+			if (21 == rolls[i])
+			{
+				printf("Congratulations! You have rolled a perfect 21!\n");
+				cont = 'n';
+			}
+			else if (rolls[i] > 21)
+			{
+				printf("Sorry! You went over 21. You lose!\n");
+				cont = 'n';
+			}
+			else if (rolls[i] >= 16)
+			{
+				do
+				{
+					printf("You are at %d and may choose to end your turn. Would you like to continue rolling? (y/n)\n", rolls[i]);
+					scanf(" %c", &cont);
+					if (cont != 'y' && cont != 'n')
+						printf("Invalid entry.\n");
+				} while (cont != 'y' && cont != 'n');
+
+			}
+			else
+				printf("You are at %d.\n", rolls[i]);
+
+		}
+
 		printf("Total roll count: %d\n", rolls[i]);
 		printf("Total bet: %d\n", bets[i]);
 		printf("Total remaining funds: %d\n", funds[i]);

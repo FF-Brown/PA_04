@@ -36,9 +36,11 @@ void display_menu(void)
 		{
 		case RULES:
 			game_rules();
+			display_menu();
 			break;
 		case FUNDS:
 			funds_menu();
+			display_menu();
 			break;
 			//Leave switch and while loop to begin playing game
 		case PLAY:
@@ -66,7 +68,6 @@ void display_menu(void)
 void game_rules(void)
 {
 	printf("\nBlackjack dice is played with 2-5 people. It is primarily a game of chance but involves some strategy.\nPlayers take turns in order. On a player's turn, he/she rolls one six-sided die. They continue rolling until the sum of the rolls is greater than 21 or they choose to stop rolling. A player has the option to stop rolling after the roll sum reaches 16.\nA player wins by having the greatest sum of all players. However, if that value is greater than 21, that player loses. Therefore, it is a competition to see who can arrive the closest to 21 without going over. The game ends when all players have either gone over 21 or chosen to stop rolling.\n\nAt the beginning of their turn and once before each roll, players have the option to place bets. The amount they win is decided at the end of the game.\nIf a player rolls 21, they get 2x their total bet.\nIf a player has the highest roll in the group but did not roll 21 exactly, they get 1.5x their total bet.\nIf two players tie for highest roll, they both get only 1x their total bet.\nThose who lose the game also lose their bets.\n\nIn this version of the game, you have the option to save a record of each player's funds to continue the same game at a different time.\n");
-	display_menu();
 }
 /*
 	Function: funds_menu()
@@ -80,40 +81,41 @@ void game_rules(void)
 */
 void funds_menu(void)
 {
-	int option = 0;
-	while (option < 1 || option > 4)
-	{
-		printf("\n~~~~~~ FUNDS MENU ~~~~~~\n\n");
-		printf("1. View current player funds.\n");
-		printf("2. Change default starting funds.\n");
-		printf("3. Reset player funds.\n");
-		printf("4. Return to main menu.\n");
-		printf("Select an option by typing the corresponding number.\n");
-		scanf("%d", &option);
+	printf("This option is currently unavailable.\n");
+	//int option = 0;
+	//while (option < 1 || option > 4)
+	//{
+	//	printf("\n~~~~~~ FUNDS MENU ~~~~~~\n\n");
+	//	printf("1. View current player funds.\n");
+	//	printf("2. Change default starting funds.\n");
+	//	printf("3. Reset player funds.\n");
+	//	printf("4. Return to main menu.\n");
+	//	printf("Select an option by typing the corresponding number.\n");
+	//	scanf("%d", &option);
 
-		//Run process based on input
-		switch (option)
-		{
-		case VIEW_FUNDS:
-			funds_view();
-			funds_menu();
-			break;
-		case EDIT_DEFAULT:
-			funds_def();
-			funds_menu();
-			break;
-		case RESET_FUNDS:
-			funds_reset();
-			funds_menu();
-			break;
-			//Return to main
-		case MAIN:
-			display_menu();
-			break;
-		default:
-			break;
-		}
-	}
+	//	//Run process based on input
+	//	switch (option)
+	//	{
+	//	case VIEW_FUNDS:
+	//		funds_view();
+	//		funds_menu();
+	//		break;
+	//	case EDIT_DEFAULT:
+	//		funds_def();
+	//		funds_menu();
+	//		break;
+	//	case RESET_FUNDS:
+	//		funds_reset();
+	//		funds_menu();
+	//		break;
+	//		//Return to main
+	//	case MAIN:
+	//		display_menu();
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
 }
 /*
 	Function: funds_view()
@@ -150,29 +152,34 @@ void funds_view(void)
 	Preconditions: Data file with player funds available but not open
 	Postconditions: Either funds reset or message displayed that they were not changed
 */
-void funds_reset(void)
+void funds_reset(int funds[], int starting_funds)
 {
-	char option = '\0';
-	//Display current funds value and option to reset.
-	funds_view();
-	while ('y' != option && 'n' != option)
-	{
-		printf("Reset funds for all players? (y/n)\n");
-		scanf(" %c", &option);
-		if ('y' == option)
-		{
-			FILE* iofile = NULL;
-			iofile = fopen("funds.dat", "w");
-			fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS);
-			fclose(iofile);
-		}
-		else if (option == 'n')
-			printf("Funds remain unchanged.\n");
-		else
-		{
-			printf("Invalid input.\n");
-		}
-	}
+	funds[0] = starting_funds;
+	funds[1] = starting_funds;
+	funds[2] = starting_funds;
+	funds[3] = starting_funds;
+	funds[4] = starting_funds;
+	//char option = '\0';
+	////Display current funds value and option to reset.
+	//funds_view();
+	//while ('y' != option && 'n' != option)
+	//{
+	//	printf("Reset funds for all players? (y/n)\n");
+	//	scanf(" %c", &option);
+	//	if ('y' == option)
+	//	{
+	//		FILE* iofile = NULL;
+	//		iofile = fopen("funds.dat", "w");
+	//		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS, DEFAULT_FUNDS);
+	//		fclose(iofile);
+	//	}
+	//	else if (option == 'n')
+	//		printf("Funds remain unchanged.\n");
+	//	else
+	//	{
+	//		printf("Invalid input.\n");
+	//	}
+	//}
 }
 /*
 	Function: funds_def()
@@ -184,12 +191,11 @@ void funds_reset(void)
 	Preconditions: Default fund value set
 	Postconditions: Default fund value either changed or player changed their mind
 */
-void funds_def(void)
+int funds_def(void)
 {
-	printf("This option is currently unavailable.\n");
 	//char option = '\0';
-	//int funds_new_def = 0;
-	////printf("Display default funds value and option to edit.\n");
+	int new_def = 0;
+	//printf("Display default funds value and option to edit.\n");
 	//printf("By default, players begin the game with $%d\n", DEFAULT_FUNDS);
 	//while (option != 'y' && option != 'n')
 	//{
@@ -198,13 +204,22 @@ void funds_def(void)
 	//	if ('y' == option)
 	//	{
 	//		printf("New starting amount: $");
-	//		scanf("%d", &funds_new_def);
+	//		scanf("%d", &new_def);
 	//	}
 	//	else if ('n' == option)
 	//		printf("Starting amount remains unchanged.\n");
 	//	else
 	//		printf("Invalid input.\n");
 	//}
+
+	while (new_def < 1)
+	{
+		printf("How much money would you like players to start with?\n");
+		scanf("%d", &new_def);
+		if (new_def < 1)
+			printf("Invalid input.\n");
+	}
+	return new_def;
 }
 /*
 	Function: funds_store()
@@ -408,26 +423,27 @@ int roll_die(void)
 */
 void old_money(void)
 {
-	char option = '\0';
-	int money_check1 = 0, money_check2 = 0, money_check3 = 0, money_check4 = 0, money_check5 = 0;
+	printf("Function currently under construction.\n");
+	//char option = '\0';
+	//int money_check1 = 0, money_check2 = 0, money_check3 = 0, money_check4 = 0, money_check5 = 0;
 
-	//Check to see if a previous game's money values are stored in data file.
-	FILE* iofile = NULL;
-	iofile = fopen("funds.dat", "r");
-	fscanf(iofile, "%d%d%d%d%d", &money_check1, &money_check2, &money_check3, &money_check4, &money_check5);
-	//fscanf(iofile, "%d", &money_check1);
-	//If any funds differ from default, prompt user to save or overwrite these values.
-	if (money_check1 != DEFAULT_FUNDS || money_check2 != DEFAULT_FUNDS || money_check3 != DEFAULT_FUNDS || money_check4 != DEFAULT_FUNDS || money_check5 != DEFAULT_FUNDS)
-	{
-		while (option != 'y' && option != 'n')
-		{
-			printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
-			scanf(" %c", &option);
-			if (option == 'n')
-				funds_reset();
-		}
-	}
-	fclose(iofile);
+	////Check to see if a previous game's money values are stored in data file.
+	//FILE* iofile = NULL;
+	//iofile = fopen("funds.dat", "r");
+	//fscanf(iofile, "%d%d%d%d%d", &money_check1, &money_check2, &money_check3, &money_check4, &money_check5);
+
+	////If any funds differ from default, prompt user to save or overwrite these values.
+	//if (money_check1 != DEFAULT_FUNDS || money_check2 != DEFAULT_FUNDS || money_check3 != DEFAULT_FUNDS || money_check4 != DEFAULT_FUNDS || money_check5 != DEFAULT_FUNDS)
+	//{
+	//	while (option != 'y' && option != 'n')
+	//	{
+	//		printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
+	//		scanf(" %c", &option);
+	//		if (option == 'n')
+	//			funds_reset();
+	//	}
+	//}
+	//fclose(iofile);
 }
 /*
 	Function: game_intro()
@@ -443,9 +459,7 @@ int game_intro(void)
 {
 	int player_count = 0;
 	printf("Welcome to Blackjack Dice!\n\n");
-	old_money();
-
-	printf("Each player begins with $%d. If you have not read the rules, please do so before playing.\n\nBegin.\n", DEFAULT_FUNDS);
+	//old_money();
 
 	//Prompt for number of players
 	while (2 > player_count || 5 < player_count)
