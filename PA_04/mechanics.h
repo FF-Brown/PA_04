@@ -37,12 +37,8 @@ void funds_store(void);
 int bet_initial(void);
 int bet_sub(void);
 bool bet_check(int current_bet, int player_funds);
-void turn_flow(int player_number, int player_funds, int* bets, int* rolls, int* funds);
 int roll_die(void);
 void old_money(void);
-double bet_return(int winning_bet);
-int winnings(int winning_bet, double multiplier);
 int game_intro(void);
 int max_roll(int rolls[]);
-bool tie_finder(int roll_sum1, int roll_sum2, int roll_sum3, int roll_sum4, int roll_sum5);
 
