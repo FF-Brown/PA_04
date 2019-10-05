@@ -43,7 +43,7 @@ begin_menu:
 			break;
 		case FUNDS:
 			money = funds_def();
-			funds_reset(funds, money);
+			arr_reset(funds, money);
 			goto begin_menu;//display_menu(funds);
 			break;
 			//Leave switch and while loop to begin playing game
@@ -108,13 +108,21 @@ void funds_view(void)
 	Preconditions: Data file with player funds available but not open
 	Postconditions: Either funds reset or message displayed that they were not changed
 */
-void funds_reset(int funds[], int starting_funds)
+void arr_reset(int arr[], int reset_value)
 {
-	funds[0] = starting_funds;
-	funds[1] = starting_funds;
-	funds[2] = starting_funds;
-	funds[3] = starting_funds;
-	funds[4] = starting_funds;
+	arr[0] = reset_value;
+	arr[1] = reset_value;
+	arr[2] = reset_value;
+	arr[3] = reset_value;
+	arr[4] = reset_value;
+}
+void double_arr_reset(double arr[], int reset_value)
+{
+	arr[0] = reset_value;
+	arr[1] = reset_value;
+	arr[2] = reset_value;
+	arr[3] = reset_value;
+	arr[4] = reset_value;
 }
 /*
 	Function: funds_def()
@@ -251,29 +259,51 @@ int roll_die(void)
 	Preconditions: Data file must exist but not be open.
 	Postconditions:	If player chooses, funds reset. Otherwise, no change made.
 */
-void old_money(void)
+char old_money(int funds[])
 {
-	printf("Function currently under construction.\n");
-	//char option = '\0';
-	//int money_check1 = 0, money_check2 = 0, money_check3 = 0, money_check4 = 0, money_check5 = 0;
+	char option = '\0';
+	int money_check = 0;
+	int starting_funds = 0;
 
-	////Check to see if a previous game's money values are stored in data file.
-	//FILE* iofile = NULL;
-	//iofile = fopen("funds.dat", "r");
-	//fscanf(iofile, "%d%d%d%d%d", &money_check1, &money_check2, &money_check3, &money_check4, &money_check5);
+	//Check to see if a previous game's money values are stored in data file.
+	FILE* iofile = NULL;
+	iofile = fopen("funds.dat", "r");
+	fscanf(iofile, "%d", &money_check);
 
-	////If any funds differ from default, prompt user to save or overwrite these values.
-	//if (money_check1 != DEFAULT_FUNDS || money_check2 != DEFAULT_FUNDS || money_check3 != DEFAULT_FUNDS || money_check4 != DEFAULT_FUNDS || money_check5 != DEFAULT_FUNDS)
-	//{
-	//	while (option != 'y' && option != 'n')
-	//	{
-	//		printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
-	//		scanf(" %c", &option);
-	//		if (option == 'n')
-	//			funds_reset();
-	//	}
-	//}
-	//fclose(iofile);
+	//If any funds differ from default, prompt user to save or overwrite these values.
+	if (money_check < 0)
+	{
+		starting_funds = funds_def();
+		arr_reset(funds, starting_funds);
+	}
+
+	else if (money_check >=0)
+	{
+		while (option != 'y' && option != 'n')
+		{
+			printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
+			scanf(" %c", &option);
+			if (option != 'y' && option != 'n')
+				printf("Invalid entry.\n");
+		}
+		if (option == 'y')
+		{
+			if (funds[0] == -1)
+			{
+				for (int k = 0; k < 5; k++)
+				{
+					fscanf(iofile, "%d", funds[k]);
+				}
+			}
+		}
+		else if (option == 'n')
+		{
+			starting_funds = funds_def();
+			arr_reset(funds, starting_funds);
+		}
+	}
+	fclose(iofile);
+	return option;
 }
 /*
 	Function: game_intro()
@@ -288,7 +318,6 @@ void old_money(void)
 int game_intro(void)
 {
 	int player_count = 0;
-	//old_money();
 
 	//Prompt for number of players
 	while (2 > player_count || 5 < player_count)
@@ -367,58 +396,58 @@ int multi(int rolls[], double multiplier[], int max)
 			winners++;
 		}
 	}
-	printf("multipliers at end of function: %d, %d, %d, %d, %d\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
+	printf("multipliers at end of function: %lf, %lf, %lf, %lf, %lf\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
 	return winners;
 }
 void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max)
 {
-		int j = 0;
-		for (int i = 0; i < 5; i++)
+	int j = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		if (multiplier[i] > 0)
 		{
-			if (multiplier[i] > 0)
-			{
-				multiplier[i] = 1;
-				tie[j] = i + 1;
-				j++;
-			}
+			multiplier[i] = 1.0;
+			tie[j] = i + 1;
+			j++;
+		}
+	}
+
+	if (winners == 2)
+	{
+		printf("We have a 2-way tie! Both Player %d and Player %d rolled %d!\n", tie[0], tie[1], max);
+		for (int i = 0; i < winners; i++)
+		{
+			funds[tie[i]] += bets[tie[i]];
+		}
+	}
+	else if (winners == 3)
+	{
+		printf("We have a 3-way tie! Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], max);
+		for (int i = 0; i < winners; i++)
+		{
+			funds[tie[i]] += bets[tie[i]];
+		}
+	}
+	else if (winners == 4)
+	{
+		printf("We have a 4-way tie!! Player %d, Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], tie[3], max);
+		for (int i = 0; i < winners; i++)
+		{
+			funds[tie[i]] += bets[tie[i]];
+		}
+	}
+	else if (winners == 5)
+	{
+		printf("We have a 5-way tie!!!! All players rolled %d!\n", max);
+		for (int i = 0; i < winners; i++)
+		{
+			funds[tie[i]] += bets[tie[i]];
 		}
 
-		if (winners == 2)
-		{
-			printf("We have a 2-way tie! Both Player %d and Player %d rolled %d!\n", tie[0], tie[1], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 3)
-		{
-			printf("We have a 3-way tie! Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 4)
-		{
-			printf("We have a 4-way tie!! Player %d, Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], tie[3], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 5)
-		{
-			printf("We have a 5-way tie!!!! All players rolled %d!\n", max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-
-		}
-		printf("All players who tied get their bets back but do not win any extra money.\n");
+	}
+	printf("All players who tied get their bets back but do not win any extra money.\n");
 }
-void chicken_dinner(int multiplier[], int bets[], int rolls[], int funds[])
+void chicken_dinner(double multiplier[], int bets[], int rolls[], int funds[])
 {
 	int winner = 0, winnings = 0;
 	for (int i = 0; i < 5; i++)
@@ -543,22 +572,22 @@ void die_graphic(int single_die)
 	}
 	else if (single_die == 1)
 	{
-	printf("\n ______________\n");
-	printf("|              |\n");
-	printf("|              |\n");
-	printf("|              |\n");
-	printf("|      0       |\n");
-	printf("|              |\n");
-	printf("|              |\n");
-	printf("|______________|\n\n");
-	//How the graphic should display
-		/*
-			 ____________
-			|			 |
-			|   	 	 |
-			|	  0	     |
-			|   	 	 |
-			|____________|
-		*/
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|      0       |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|______________|\n\n");
+		//How the graphic should display
+			/*
+				 ____________
+				|			 |
+				|   	 	 |
+				|	  0	     |
+				|   	 	 |
+				|____________|
+			*/
 	}
 }

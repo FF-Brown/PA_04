@@ -12,21 +12,20 @@ int main(void)
 	int player_count = 0;
 	int die_roll = 0;
 	char cont = 'y';
-	int funds[5] = { 0 };
+	int funds[5] = { -1, -1, -1, -1, -1 };
 	int bets[5] = { 0, 0, 0, 0, 0 };
 	int rolls[5] = { 0, 0, 0, 0, 0 };
 	int winners = 0;
 	double multiplier[5] = { 0, 0, 0, 0, 0 };
 	int max = 0;
 	char play_again = '\0';
-	int one_win = 0;
 	int tie[5] = { 0, 0, 0, 0, 0 };
-	int winnings = 0;
 	int starting_funds = 0;
-	int bet_total = 0, current_bet = 0;
+	int current_bet = 0;
 	int single_die = 0;
-	int roll_sum = 0;
 	bool check = false;
+	char money_reset = '\0';
+	char save = '\0';
 
 	srand(time(NULL));
 
@@ -41,20 +40,31 @@ int main(void)
 	printf("|   0          |\t|              |\n");
 	printf("|______________|\t|______________|\n");
 
-	game_start:
+game_start:
+	//Reset key variables for game replay
+	arr_reset(bets, 0);
+	arr_reset(rolls, 0);
+	arr_reset(tie, 0);
+	double_arr_reset(multiplier, 0);
+	play_again = '\0';
+	money_reset = '\0';
+	
+	money_reset = old_money(funds);
+
 	display_menu(funds);
-	if (funds[0] == 0)
+	if (funds[0] == -1)
 	{
 		starting_funds = funds_def();
-		funds_reset(funds, starting_funds);
+		arr_reset(funds, starting_funds);
 	}
+
 	player_count = game_intro();
 
 	//Repeat once for each player
 	for (int i = 0; i < player_count; i++)
 	{
 		//Get inital bet (mandatory) and run bet_check(). Add bet to total, subtract from funds.
-		printf("\nBest of luck, Player %d!\n", i+1);
+		printf("\nBest of luck, Player %d!\n", i + 1);
 		while (check == false)
 		{
 			current_bet = bet_initial();
@@ -110,7 +120,7 @@ int main(void)
 	//Assign bet multipliers according to whether the player rolled the highest number (not concerned with ties here)
 	//At the same time, determine "number of winners (whether or not there was a tie)
 	winners = multi(rolls, multiplier, max);
-	printf("multipliers: %d, %d, %d, %d, %d\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
+	printf("multipliers: %lf, %lf, %lf, %lf, %lf\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
 	//If tie, change multipliers of winners to 1 and display the tied players and their roll
 	if (winners > 1)
 		tie_fighter(multiplier, tie, bets, funds, winners, max);
@@ -122,11 +132,30 @@ int main(void)
 	}
 
 
-	//Save player funds to data file for next time
-	//FILE* iofile = NULL;
-	//iofile = fopen("funds.dat", "w");
-	//fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
-	//fclose(iofile);
+	//Offer to save player funds to data file for next time
+	
+	save = '\0';
+	while (save != 'y' && save != 'n')
+	{
+		printf("Would you like to save your data for later?\n");
+		scanf(" %c", &save);
+		if (save != 'y' && save != 'n')
+			printf("Invalid entry.\n");
+	}
+	FILE* iofile = NULL;
+	iofile = fopen("funds.dat", "w");
+	if (save == 'y')
+	{
+		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
+		
+		printf("Player funds saved to file for next game.\n");
+	}
+	else if (save == 'n')
+	{
+		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", -1, -1, -1, -1, -1);
+		arr_reset(funds, -1);
+	}
+	fclose(iofile);
 
 	//End game or loop back to menu
 	printf("\nGreat game!!\n");
