@@ -350,7 +350,7 @@ char roll_check(int rolls[], int i)
 		printf("You are at %d.\n", rolls[i]);
 	return cont;
 }
-int multi(int rolls[], int multiplier[], int winners, int max)
+int multi(int rolls[], double multiplier[], int winners, int max)
 {
 	for (int i = 0; i < 5; i++)
 	{
@@ -369,7 +369,7 @@ int multi(int rolls[], int multiplier[], int winners, int max)
 	}
 	return winners;
 }
-void tie_fighter(int multiplier[], int tie[], int bets[], int funds[], int winners, int max)
+void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max)
 {
 		int j = 0;
 		for (int i = 0; i < 5; i++)
@@ -417,3 +417,4 @@ void tie_fighter(int multiplier[], int tie[], int bets[], int funds[], int winne
 		}
 		printf("All players who tied get their bets back but do not win any extra money.\n");
 }
+void chicken_dinner(void);

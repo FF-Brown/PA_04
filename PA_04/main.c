@@ -120,6 +120,9 @@ int main(void)
 				break;
 			}
 		}
+		//In case somehow this variable gets set to 0, which should never happen
+		if (one_win == 0)
+			printf("Error code 7331;\n");
 		winnings = bets[one_win - 1] * multiplier[one_win - 1];
 		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win - 1]);
 		printf("Since you bet $%d, you win $%d!\n", bets[one_win - 1], winnings);
@@ -128,10 +131,10 @@ int main(void)
 
 
 	//Save player funds to data file for next time
-	FILE* iofile = NULL;
-	iofile = fopen("funds.dat", "w");
-	fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
-	fclose(iofile);
+	//FILE* iofile = NULL;
+	//iofile = fopen("funds.dat", "w");
+	//fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
+	//fclose(iofile);
 
 	//End game or loop back to menu
 	printf("\nGreat game!!\n");
