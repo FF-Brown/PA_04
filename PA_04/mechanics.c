@@ -417,4 +417,22 @@ void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int wi
 		}
 		printf("All players who tied get their bets back but do not win any extra money.\n");
 }
-void chicken_dinner(void);
+void chicken_dinner(int rolls[], int bets[], int funds[], double multiplier[])
+{
+	int winnings = 0, winner = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		if (multiplier[i] > 0)
+		{
+			winner = i + 1;
+			break;
+		}
+	}
+	//In case somehow this variable gets set to 0, which should never happen because it will break things
+	if (winner == 0)
+		exit(7331);
+	winnings = bets[winner - 1] * multiplier[winner - 1];
+	printf("The congratulations go to Player %d, with a roll of %d!\n", winner, rolls[winner - 1]);
+	printf("Since you bet $%d, you win $%d!\n", bets[winner - 1], winnings);
+	funds[winner - 1] += winnings;
+}

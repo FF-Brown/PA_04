@@ -44,4 +44,4 @@ int max_roll(int rolls[]);
 char roll_check(int rolls[], int i);
 int multi(int rolls[], double multiplier[], int winners, int max);
 void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max);
-void chicken_dinner(void);
+void chicken_dinner(int rolls[], int bets[], int funds[], double multiplier[]);

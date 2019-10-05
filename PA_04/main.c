@@ -109,24 +109,10 @@ int main(void)
 	if (winners > 1)
 		tie_fighter(multiplier, tie, bets, funds, winners, max);
 
-	//If only one winner, tell that player that they won
+	//If only one winner, tell that player that they won and calculate their winnings
 	else if (winners == 1)
 	{
-		for (int i = 0; i < 5; i++)
-		{
-			if (multiplier[i] > 0)
-			{
-				one_win = i + 1;
-				break;
-			}
-		}
-		//In case somehow this variable gets set to 0, which should never happen
-		if (one_win == 0)
-			printf("Error code 7331;\n");
-		winnings = bets[one_win - 1] * multiplier[one_win - 1];
-		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win - 1]);
-		printf("Since you bet $%d, you win $%d!\n", bets[one_win - 1], winnings);
-		funds[one_win - 1] += winnings;
+		chicken_dinner(rolls, bets, funds, multiplier);
 	}
 
 
