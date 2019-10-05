@@ -11,12 +11,10 @@ int main(void)
 {
 	int player_count = 0;
 	int die_roll = 0;
-	int bet_p1 = 0, bet_p2 = 0, bet_p3 = 0, bet_p4 = 0, bet_p5 = 0;
 	char cont = 'y';
 	int funds[5] = { 0 };
 	int bets[5] = { 0, 0, 0, 0, 0 };
 	int rolls[5] = { 0, 0, 0, 0, 0 };
-	int winner[5] = { 0, 0, 0, 0, 0 };
 	int winners = 0;
 	double multiplier[5] = { 0, 0, 0, 0, 0 };
 	int max = 0;
@@ -30,15 +28,24 @@ int main(void)
 	int roll_sum = 0;
 	bool check = false;
 
+	// ____________
+	//|			 |
+	//|	0	 0	 |
+	//|	0	 0	 |
+	//|	0	 0	 |
+	//|____________|
+
 	srand(time(NULL));
 
 	//Gameplay
 	game_start:
 	display_menu(funds);
-	if(funds[0] == 0)
-		player_count = game_intro();
-	starting_funds = funds_def();
-	funds_reset(funds, starting_funds);
+	if (funds[0] == 0)
+	{
+		starting_funds = funds_def();
+		funds_reset(funds, starting_funds);
+	}
+	player_count = game_intro();
 
 	//Repeat once for each player
 	for (int i = 0; i < player_count; i++)
@@ -77,36 +84,15 @@ int main(void)
 			bets[i] += current_bet;
 			funds[i] -= current_bet;
 
-			//Roll die. Add to sum. If 16+, offer to stop rolling.
+			//Roll die. Add to sum. If >=21, force end turn. If >=16, offer to stop rolling.
 			single_die = roll_die();
 			rolls[i] += single_die;
 			printf("You rolled a %d. ", single_die);
-			if (21 == rolls[i])
-			{
-				printf("Congratulations! You have rolled a perfect 21!\n");
-				cont = 'n';
-			}
-			else if (rolls[i] > 21)
-			{
-				printf("Sorry! You went over 21. You lose!\n");
-				cont = 'n';
-			}
-			else if (rolls[i] >= 16)
-			{
-				do
-				{
-					printf("You are at %d and may choose to end your turn. Would you like to continue rolling? (y/n)\n", rolls[i]);
-					scanf(" %c", &cont);
-					if (cont != 'y' && cont != 'n')
-						printf("Invalid entry.\n");
-				} while (cont != 'y' && cont != 'n');
-
-			}
-			else
-				printf("You are at %d.\n", rolls[i]);
+			cont = roll_check(rolls, i);
 
 		}
 
+		//Print out final turn info
 		printf("Total roll count: %d\n", rolls[i]);
 		printf("Total bet: $%d\n", bets[i]);
 		printf("Total remaining funds: $%d\n", funds[i]);
@@ -117,71 +103,11 @@ int main(void)
 	//Find max value rolled by any player
 	max = max_roll(rolls);
 	//Assign bet multipliers according to whether the player rolled the highest number (not concerned with ties here)
-	for (int i = 0; i < 5; i++)
-	{
-		if (rolls[i] != max)
-			multiplier[i] = 0;
-		else if (rolls[i] == 21)
-		{
-			multiplier[i] = 2;
-			winners++;
-		}
-		else if (rolls[i] == max)
-		{
-			multiplier[i] = 1.5;
-			winners++;
-		}
-	}
-
+	//At the same time, determine "number of winners (whether or not there was a tie)
+	winners = multi(rolls, multiplier, winners, max);
 	//If tie, change multipliers of winners to 1 and display the tied players and their roll
 	if (winners > 1)
-	{
-		int j = 0;
-		for (int i = 0; i < 5; i++)
-		{
-			if (multiplier[i] > 0)
-			{
-				multiplier[i] = 1;
-				tie[j] = i + 1;
-				j++;
-			}
-		}
-
-		if (winners == 2)
-		{
-			printf("We have a 2-way tie! Both Player %d and Player %d rolled %d!\n", tie[0], tie[1], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 3)
-		{
-			printf("We have a 3-way tie! Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 4)
-		{
-			printf("We have a 4-way tie!! Player %d, Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], tie[3], max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-		}
-		else if (winners == 5)
-		{
-			printf("We have a 5-way tie!!!! All players rolled %d!\n", max);
-			for (int i = 0; i < winners; i++)
-			{
-				funds[tie[i]] += bets[tie[i]];
-			}
-
-		}
-		printf("All players who tied get their bets back but do not win any extra money.\n");
-	}
+		tie_fighter(multiplier, tie, bets, funds, winners, max);
 
 	//If only one winner, tell that player that they won
 	else if (winners == 1)

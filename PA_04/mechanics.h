@@ -39,6 +39,8 @@ int bet_sub(void);
 bool bet_check(int current_bet, int player_funds);
 int roll_die(void);
 void old_money(void);
-int game_intro(void);
+int game_intro(void); 
 int max_roll(int rolls[]);
-
+char roll_check(int rolls[], int i);
+int multi(int rolls[], int multiplier[], int winners, int max);
+void tie_fighter(int multiplier[], int tie[], int bets[], int funds[], int winners, int max);

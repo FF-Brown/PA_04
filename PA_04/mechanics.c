@@ -22,11 +22,13 @@ void display_menu(int funds[])
 	int option = 0;
 	int money = 0;
 	//Display menu until receiving valid input
+begin_menu:
+	option = 0;
 	while (option < 1 || option > 4)
 	{
 		printf("\n~~~~~~ MAIN MENU ~~~~~~\n\n");
 		printf("1. Display game rules.\n");
-		printf("2. View and edit funds.\n");
+		printf("2. Edit player funds.\n");
 		printf("3. Begin game.\n");
 		printf("4. Exit.\n");
 		printf("Select an option by typing the corresponding number.\n");
@@ -42,7 +44,7 @@ void display_menu(int funds[])
 		case FUNDS:
 			money = funds_def();
 			funds_reset(funds, money);
-			display_menu(funds);
+			goto begin_menu;//display_menu(funds);
 			break;
 			//Leave switch and while loop to begin playing game
 		case PLAY:
@@ -70,54 +72,6 @@ void display_menu(int funds[])
 void game_rules(void)
 {
 	printf("\nBlackjack dice is played with 2-5 people. It is primarily a game of chance but involves some strategy.\nPlayers take turns in order. On a player's turn, he/she rolls one six-sided die. They continue rolling until the sum of the rolls is greater than 21 or they choose to stop rolling. A player has the option to stop rolling after the roll sum reaches 16.\nA player wins by having the greatest sum of all players. However, if that value is greater than 21, that player loses. Therefore, it is a competition to see who can arrive the closest to 21 without going over. The game ends when all players have either gone over 21 or chosen to stop rolling.\n\nAt the beginning of their turn and once before each roll, players have the option to place bets. The amount they win is decided at the end of the game.\nIf a player rolls 21, they get 2x their total bet.\nIf a player has the highest roll in the group but did not roll 21 exactly, they get 1.5x their total bet.\nIf two players tie for highest roll, they both get only 1x their total bet.\nThose who lose the game also lose their bets.\n\nIn this version of the game, you have the option to save a record of each player's funds to continue the same game at a different time.\n");
-}
-/*
-	Function: funds_menu()
-	Date Created: 10/01/2019
-	Last Modified: 10/02/2019 Removed display_menu() call
-	Description: Display options for editing funds.
-	Input parameters: None
-	Returns: None
-	Preconditions: Generally only called from another menu option
-	Postconditions: Activates other menu option
-*/
-void funds_menu(void)
-{
-	printf("This option is currently unavailable.\n");
-	//int option = 0;
-	//while (option < 1 || option > 4)
-	//{
-	//	printf("\n~~~~~~ FUNDS MENU ~~~~~~\n\n");
-	//	printf("1. View current player funds.\n");
-	//	printf("2. Change default starting funds.\n");
-	//	printf("3. Reset player funds.\n");
-	//	printf("4. Return to main menu.\n");
-	//	printf("Select an option by typing the corresponding number.\n");
-	//	scanf("%d", &option);
-
-	//	//Run process based on input
-	//	switch (option)
-	//	{
-	//	case VIEW_FUNDS:
-	//		funds_view();
-	//		funds_menu();
-	//		break;
-	//	case EDIT_DEFAULT:
-	//		funds_def();
-	//		funds_menu();
-	//		break;
-	//	case RESET_FUNDS:
-	//		funds_reset();
-	//		funds_menu();
-	//		break;
-	//		//Return to main
-	//	case MAIN:
-	//		display_menu();
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
 }
 /*
 	Function: funds_view()
@@ -367,4 +321,99 @@ int max_roll(int rolls[])
 			max = rolls[i];
 	}
 	return max;
+}
+char roll_check(int rolls[], int i)
+{
+	char cont = 'y';
+	if (21 == rolls[i])
+	{
+		printf("Congratulations! You have rolled a perfect 21!\n");
+		cont = 'n';
+	}
+	else if (rolls[i] > 21)
+	{
+		printf("Sorry! You went over 21. You lose!\n");
+		cont = 'n';
+	}
+	else if (rolls[i] >= 16)
+	{
+		do
+		{
+			printf("You are at %d and may choose to end your turn. Would you like to continue rolling? (y/n)\n", rolls[i]);
+			scanf(" %c", &cont);
+			if (cont != 'y' && cont != 'n')
+				printf("Invalid entry.\n");
+		} while (cont != 'y' && cont != 'n');
+
+	}
+	else
+		printf("You are at %d.\n", rolls[i]);
+	return cont;
+}
+int multi(int rolls[], int multiplier[], int winners, int max)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		if (rolls[i] != max)
+			multiplier[i] = 0;
+		else if (rolls[i] == 21)
+		{
+			multiplier[i] = 2;
+			winners++;
+		}
+		else if (rolls[i] == max)
+		{
+			multiplier[i] = 1.5;
+			winners++;
+		}
+	}
+	return winners;
+}
+void tie_fighter(int multiplier[], int tie[], int bets[], int funds[], int winners, int max)
+{
+		int j = 0;
+		for (int i = 0; i < 5; i++)
+		{
+			if (multiplier[i] > 0)
+			{
+				multiplier[i] = 1;
+				tie[j] = i + 1;
+				j++;
+			}
+		}
+
+		if (winners == 2)
+		{
+			printf("We have a 2-way tie! Both Player %d and Player %d rolled %d!\n", tie[0], tie[1], max);
+			for (int i = 0; i < winners; i++)
+			{
+				funds[tie[i]] += bets[tie[i]];
+			}
+		}
+		else if (winners == 3)
+		{
+			printf("We have a 3-way tie! Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], max);
+			for (int i = 0; i < winners; i++)
+			{
+				funds[tie[i]] += bets[tie[i]];
+			}
+		}
+		else if (winners == 4)
+		{
+			printf("We have a 4-way tie!! Player %d, Player %d, Player %d, and Player %d all rolled %d!\n", tie[0], tie[1], tie[2], tie[3], max);
+			for (int i = 0; i < winners; i++)
+			{
+				funds[tie[i]] += bets[tie[i]];
+			}
+		}
+		else if (winners == 5)
+		{
+			printf("We have a 5-way tie!!!! All players rolled %d!\n", max);
+			for (int i = 0; i < winners; i++)
+			{
+				funds[tie[i]] += bets[tie[i]];
+			}
+
+		}
+		printf("All players who tied get their bets back but do not win any extra money.\n");
 }
