@@ -28,16 +28,19 @@ int main(void)
 	int roll_sum = 0;
 	bool check = false;
 
-	// ____________
-	//|			 |
-	//|	0	 0	 |
-	//|	0	 0	 |
-	//|	0	 0	 |
-	//|____________|
-
 	srand(time(NULL));
 
 	//Gameplay
+	printf("------WELCOME TO TERMINAL BLACKJACK DICE------\n\n");
+	printf("\n ______________\t\t ______________\n");
+	printf("|              |\t|              |\n");
+	printf("|         0    |\t|              |\n");
+	printf("|              |\t|              |\n");
+	printf("|              |\t|      0       |\n");
+	printf("|              |\t|              |\n");
+	printf("|   0          |\t|              |\n");
+	printf("|______________|\t|______________|\n");
+
 	game_start:
 	display_menu(funds);
 	if (funds[0] == 0)
@@ -66,7 +69,8 @@ int main(void)
 		//First roll. Simplified version of subsequent rolls.
 		single_die = roll_die();
 		rolls[i] = single_die;
-		printf("You rolled a %d. ", single_die);
+		printf("You rolled a %d.\n", single_die);
+		die_graphic(single_die);
 		printf("You are at %d.\n", rolls[i]);
 
 		cont = 'y';
@@ -87,7 +91,8 @@ int main(void)
 			//Roll die. Add to sum. If >=21, force end turn. If >=16, offer to stop rolling.
 			single_die = roll_die();
 			rolls[i] += single_die;
-			printf("You rolled a %d. ", single_die);
+			printf("You rolled a %d.\n", single_die);
+			die_graphic(single_die);
 			cont = roll_check(rolls, i);
 
 		}
@@ -104,7 +109,8 @@ int main(void)
 	max = max_roll(rolls);
 	//Assign bet multipliers according to whether the player rolled the highest number (not concerned with ties here)
 	//At the same time, determine "number of winners (whether or not there was a tie)
-	winners = multi(rolls, multiplier, winners, max);
+	winners = multi(rolls, multiplier, max);
+	printf("multipliers: %d, %d, %d, %d, %d\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
 	//If tie, change multipliers of winners to 1 and display the tied players and their roll
 	if (winners > 1)
 		tie_fighter(multiplier, tie, bets, funds, winners, max);
@@ -112,21 +118,7 @@ int main(void)
 	//If only one winner, tell that player that they won
 	else if (winners == 1)
 	{
-		for (int i = 0; i < 5; i++)
-		{
-			if (multiplier[i] > 0)
-			{
-				one_win = i + 1;
-				break;
-			}
-		}
-		//In case somehow this variable gets set to 0, which should never happen
-		if (one_win == 0)
-			printf("Error code 7331;\n");
-		winnings = bets[one_win - 1] * multiplier[one_win - 1];
-		printf("The congratulations go to Player %d, with a roll of %d!\n", one_win, rolls[one_win - 1]);
-		printf("Since you bet $%d, you win $%d!\n", bets[one_win - 1], winnings);
-		funds[one_win - 1] += winnings;
+		chicken_dinner(multiplier, bets, rolls, funds);
 	}
 
 

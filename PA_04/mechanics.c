@@ -288,7 +288,6 @@ void old_money(void)
 int game_intro(void)
 {
 	int player_count = 0;
-	printf("Welcome to Blackjack Dice!\n\n");
 	//old_money();
 
 	//Prompt for number of players
@@ -350,8 +349,9 @@ char roll_check(int rolls[], int i)
 		printf("You are at %d.\n", rolls[i]);
 	return cont;
 }
-int multi(int rolls[], double multiplier[], int winners, int max)
+int multi(int rolls[], double multiplier[], int max)
 {
+	int winners = 0;
 	for (int i = 0; i < 5; i++)
 	{
 		if (rolls[i] != max)
@@ -367,6 +367,7 @@ int multi(int rolls[], double multiplier[], int winners, int max)
 			winners++;
 		}
 	}
+	printf("multipliers at end of function: %d, %d, %d, %d, %d\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
 	return winners;
 }
 void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max)
@@ -417,4 +418,147 @@ void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int wi
 		}
 		printf("All players who tied get their bets back but do not win any extra money.\n");
 }
-void chicken_dinner(void);
+void chicken_dinner(int multiplier[], int bets[], int rolls[], int funds[])
+{
+	int winner = 0, winnings = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		if (multiplier[i] > 0)
+		{
+			winner = i + 1;
+			break;
+		}
+	}
+	//In case somehow this variable gets set to 0, which should never happen
+	if (winner == 0)
+		exit(7331);
+	winnings = bets[winner - 1] * multiplier[winner - 1];
+	printf("The congratulations go to Player %d, with a roll of %d!\n", winner, rolls[winner - 1]);
+	printf("Since you bet $%d, you win $%d!\n", bets[winner - 1], winnings);
+	funds[winner - 1] += winnings;
+}
+void die_graphic(int single_die)
+{
+	if (single_die == 6)
+	{
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|    0    0    |\n");
+		printf("|              |\n");
+		printf("|    0    0    |\n");
+		printf("|              |\n");
+		printf("|    0    0    |\n");
+		printf("|______________|\n\n");
+		//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|	0	 0	 |
+			|	0	 0	 |
+			|	0	 0	 |
+			|____________|
+		*/
+	}
+	else if (single_die == 5)
+	{
+
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|   0     0    |\n");
+		printf("|              |\n");
+		printf("|      0       |\n");
+		printf("|              |\n");
+		printf("|   0     0    |\n");
+		printf("|______________|\n\n");
+
+		//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|  0	 0	 |
+			|	  0	     |
+			|  0	 0	 |
+			|____________|
+		*/
+	}
+	else if (single_die == 4)
+	{
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|   0     0    |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|   0     0    |\n");
+		printf("|______________|\n\n");
+		//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|	0	 0	 |
+			|		 	 |
+			|	0	 0	 |
+			|____________|
+		*/
+	}
+	else if (single_die == 3)
+	{
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|         0    |\n");
+		printf("|              |\n");
+		printf("|      0       |\n");
+		printf("|              |\n");
+		printf("|   0          |\n");
+		printf("|______________|\n\n");
+		//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|   	 0	 |
+			|	  0	     |
+			|  0	 	 |
+			|____________|
+		*/
+	}
+	else if (single_die == 2)
+	{
+		printf("\n ______________\n");
+		printf("|              |\n");
+		printf("|         0    |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|              |\n");
+		printf("|   0          |\n");
+		printf("|______________|\n\n");
+		//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|   	 0	 |
+			|	  	     |
+			|  0	 	 |
+			|____________|
+		*/
+	}
+	else if (single_die == 1)
+	{
+	printf("\n ______________\n");
+	printf("|              |\n");
+	printf("|              |\n");
+	printf("|              |\n");
+	printf("|      0       |\n");
+	printf("|              |\n");
+	printf("|              |\n");
+	printf("|______________|\n\n");
+	//How the graphic should display
+		/*
+			 ____________
+			|			 |
+			|   	 	 |
+			|	  0	     |
+			|   	 	 |
+			|____________|
+		*/
+	}
+}
