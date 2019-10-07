@@ -57,7 +57,8 @@ begin_menu:
 		default:
 			break;
 		}
-
+		if (option < 1 || option > 4)
+			printf("Invalid entry.\n");
 	}
 }
 /*
@@ -290,7 +291,7 @@ char old_money(int funds[])
 	}
 
 	//Otherwise...
-	else if (money_check >=0)
+	else if (money_check >= 0)
 	{
 		while (option != 'y' && option != 'n') //Keep money from last game?
 		{
