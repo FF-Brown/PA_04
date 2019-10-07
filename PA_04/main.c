@@ -49,17 +49,11 @@ game_start:
 	play_again = '\0';
 	money_reset = '\0';
 	
-	money_reset = old_money(funds);
-
 	display_menu(funds);
-	//Probably unnecessary. Testing.......
-	//if (funds[0] == -1)
-	//{
-	//	starting_funds = funds_def();
-	//	arr_reset(funds, starting_funds);
-	}
 
 	player_count = game_intro();
+	if(funds[0] == -1)
+		money_reset = old_money(funds);
 
 	//Repeat once for each player
 	for (int i = 0; i < player_count; i++)

@@ -267,8 +267,9 @@ char old_money(int funds[])
 
 	//Check to see if a previous game's money values are stored in data file.
 	FILE* iofile = NULL;
-	iofile = fopen("funds.dat", "r");
+	iofile = fopen("funds.dat", "r+");
 	fscanf(iofile, "%d", &money_check);
+
 
 	//If any funds differ from default (which is -1 to avoid confusion with case where Player 1 lost all their money and saved $0), prompt user to save or overwrite these values.
 	if (money_check < 0)
@@ -292,7 +293,7 @@ char old_money(int funds[])
 		{
 			for (int k = 0; k < 5; k++)
 			{
-				fscanf(iofile, "%d", funds[k]);
+				fscanf(iofile, "%d", &funds[k]);
 			}
 		}
 		//If no, reset all data
