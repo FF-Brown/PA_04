@@ -25,7 +25,6 @@ int main(void)
 	int single_die = 0;
 	bool check = false;
 	char money_reset = '\0';
-	char save = '\0';
 
 	srand(time(NULL));
 
@@ -62,6 +61,7 @@ game_start:
 		printf("\nBest of luck, Player %d!\n", i + 1);
 		while (check == false)
 		{
+			funds_current_view(funds, i);
 			current_bet = bet_initial();
 			check = bet_check(current_bet, funds[i]);
 			if (check == false)
@@ -84,6 +84,7 @@ game_start:
 			//Offer to take a bet. Call check_bet(). Add to bet_total and subtract from player_funds
 			while (!check)
 			{
+				funds_current_view(funds, i);
 				current_bet = bet_sub();
 				check = bet_check(current_bet, funds[i]);
 				if (!check)
@@ -115,42 +116,37 @@ game_start:
 	//Assign bet multipliers according to whether the player rolled the highest number (not concerned with ties here)
 	//At the same time, determine "number of winners (whether or not there was a tie)
 	winners = multi(rolls, multiplier, max);
-	printf("multipliers: %lf, %lf, %lf, %lf, %lf\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
+
 	//If tie, change multipliers of winners to 1 and display the tied players and their roll
 	if (winners > 1)
 		tie_fighter(multiplier, tie, bets, funds, winners, max);
 
 	//If only one winner, tell that player that they won
 	else if (winners == 1)
-	{
 		chicken_dinner(multiplier, bets, rolls, funds);
-	}
+	
+	//Print final values of funds
+	printf("\nFinal bank totals: \n");
+	for (int i = 0; i < 5; i++)
+	{
+		//int player = 0;
+		printf("Player %d: ", i+1);
+		funds_current_view(funds, i);
 
+	}
+	//printf("Player 1: ");
+	//funds_current_view(funds, 0);
+	//printf("Player 2: ");
+	//funds_current_view(funds, 1);
+	//printf("Player 3: ");
+	//funds_current_view(funds, 2);
+	//printf("Player 4: ");
+	//funds_current_view(funds, 3);
+	//printf("Player 5: ");
+	//funds_current_view(funds, 4);
 
 	//Offer to save player funds to data file for next time	
-	save = '\0';
-	while (save != 'y' && save != 'n')
-	{
-		printf("Would you like to save your data for later?\n");
-		scanf(" %c", &save);
-		if (save != 'y' && save != 'n') //In case typo
-			printf("Invalid entry.\n");
-	}
-
-	FILE* iofile = NULL;
-	iofile = fopen("funds.dat", "w");
-	if (save == 'y') //If yes, save to file
-	{
-		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
-		
-		printf("Player funds saved to file for next game.\n");
-	}
-	else if (save == 'n') //If no, overwrite file with -1
-	{
-		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", -1, -1, -1, -1, -1);
-		arr_reset(funds, -1);
-	}
-	fclose(iofile);
+	save_data(funds);
 
 	//End game or loop back to menu
 	printf("\nGreat game!!\n");

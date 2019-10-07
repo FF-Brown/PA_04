@@ -10,11 +10,11 @@
 /*
 	Function: display_menu()
 	Date Created: 10/01/2019
-	Last Modified:
-	Description: Displays game menu. Redisplays until receiving valid input. Calls other functions based on input. May remove switch and place in main. Haven't decided yet.
-	Input parameters: None
+	Last Modified: 10/06/2019 Added funds option back in
+	Description: Displays game menu. Redisplays until receiving valid input. Calls other functions based on input. 
+	Input parameters: funds[]
 	Returns: None
-	Preconditions: None
+	Preconditions: funds[] initialized and available
 	Postconditions: Secondary menu displayed, playing game, or exited program.
 */
 void display_menu(int funds[])
@@ -42,6 +42,7 @@ begin_menu:
 			display_menu(funds);
 			break;
 		case FUNDS:
+			funds_saved_view();
 			money = funds_def();
 			arr_reset(funds, money);
 			goto begin_menu;//display_menu(funds);
@@ -83,7 +84,11 @@ void game_rules(void)
 	Preconditions: File containing player data available but not open
 	Postconditions: Info output to screen
 */
-void funds_view(void)
+void funds_current_view(int funds[], int i)
+{
+	printf("$%d available.\n", funds[i]);
+}
+void funds_saved_view(void)
 {
 	int player1 = 0, player2 = 0, player3 = 0, player4 = 0, player5 = 0;
 	FILE* iofile = NULL;
@@ -91,7 +96,7 @@ void funds_view(void)
 	fscanf(iofile, "%d%d%d%d%d", &player1, &player2, &player3, &player4, &player5);
 	fclose(iofile);
 
-	printf("\nCurrently, players have the following amounts of money:\n\n");
+	printf("\nIn your save file, players have the following amounts of money:\n\n");
 	printf("Player 1: $%d\n", player1);
 	printf("Player 2: $%d\n", player2);
 	printf("Player 3: $%d\n", player3);
@@ -271,7 +276,7 @@ char old_money(int funds[])
 	fscanf(iofile, "%d", &money_check);
 
 
-	//If any funds differ from default (which is -1 to avoid confusion with case where Player 1 lost all their money and saved $0), prompt user to save or overwrite these values.
+	//If no funds differ from default (which is -1 to avoid confusion with case where Player 1 lost all their money and saved $0), prompt user for new starting values
 	if (money_check < 0)
 	{
 		starting_funds = funds_def();
@@ -283,7 +288,8 @@ char old_money(int funds[])
 	{
 		while (option != 'y' && option != 'n') //Keep money from last game?
 		{
-			printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
+			funds_saved_view();
+			printf("\nWould you like to retain the funds from the end of your last game? (y/n)\n");
 			scanf(" %c", &option);
 			if (option != 'y' && option != 'n') //In case typo
 				printf("Invalid entry.\n");
@@ -400,7 +406,6 @@ int multi(int rolls[], double multiplier[], int max)
 			winners++;
 		}
 	}
-	printf("multipliers at end of function: %lf, %lf, %lf, %lf, %lf\n", multiplier[0], multiplier[1], multiplier[2], multiplier[3], multiplier[4]);
 	return winners;
 }
 void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max)
@@ -466,7 +471,7 @@ void chicken_dinner(double multiplier[], int bets[], int rolls[], int funds[])
 	if (winner == 0)
 		exit(7331);
 	winnings = bets[winner - 1] * multiplier[winner - 1];
-	printf("The congratulations go to Player %d, with a roll of %d!\n", winner, rolls[winner - 1]);
+	printf("\nThe congratulations go to Player %d, with a roll of %d!\n", winner, rolls[winner - 1]);
 	printf("Since you bet $%d, you win $%d!\n", bets[winner - 1], winnings);
 	funds[winner - 1] += winnings;
 }
@@ -594,4 +599,31 @@ void die_graphic(int single_die)
 				|____________|
 			*/
 	}
+}
+void save_data(int funds[])
+{
+	int save = '\0';
+	while (save != 'y' && save != 'n')
+	{
+		printf("Would you like to save your data for later?\n");
+		scanf(" %c", &save);
+		if (save != 'y' && save != 'n') //In case typo
+			printf("Invalid entry.\n");
+	}
+
+	FILE* iofile = NULL;
+	iofile = fopen("funds.dat", "w");
+	if (save == 'y') //If yes, save to file
+	{
+		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
+
+		printf("Player funds saved to file for next game.\n");
+	}
+	else if (save == 'n') //If no, overwrite file with -1
+	{
+		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", -1, -1, -1, -1, -1);
+		arr_reset(funds, -1);
+	}
+	fclose(iofile);
+
 }
