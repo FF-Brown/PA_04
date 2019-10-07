@@ -126,7 +126,7 @@ game_start:
 		chicken_dinner(multiplier, bets, rolls, funds);
 	
 	//Print final values of funds
-	bank_totals(funds);
+	bank_totals(funds, player_count);
 
 	//Offer to save player funds to data file for next time	
 	save_data(funds);

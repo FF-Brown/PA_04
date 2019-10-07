@@ -671,7 +671,7 @@ void save_data(int funds[])
 	int save = '\0';
 	while (save != 'y' && save != 'n')
 	{
-		printf("\nWould you like to save your data for later?\n");
+		printf("\nWould you like to save your data for later? (y/n)\n");
 		scanf(" %c", &save);
 		if (save != 'y' && save != 'n') //In case typo
 			printf("Invalid entry.\n");
@@ -697,13 +697,13 @@ void save_data(int funds[])
 	Function: bank_totals()
 	Date Created: 10/07/2019
 	Last Modified:
-	Description: Displays how much money players ended the game with
-	Input parameters: funds[]
+	Description: Displays how much money players ended the game with. Limits list to participating players
+	Input parameters: funds[], number of players
 	Returns: None
 	Preconditions: Game over. Winnings calculated
 	Postconditions: All final total funds displayed.
 */
-void bank_totals(int funds[])
+void bank_totals(int funds[], int player_count)
 {
 	printf("\nFinal bank totals: \n");
 	for (int i = 0; i < 5; i++)

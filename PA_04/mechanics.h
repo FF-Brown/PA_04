@@ -242,10 +242,10 @@ void save_data(int funds[]);
 	Function: bank_totals()
 	Date Created: 10/07/2019
 	Last Modified:
-	Description: Displays how much money players ended the game with
-	Input parameters: funds[]
+	Description: Displays how much money players ended the game with. Limits list to participating players
+	Input parameters: funds[], number of players
 	Returns: None
 	Preconditions: Game over. Winnings calculated
 	Postconditions: All final total funds displayed.
 */
-void bank_totals(int funds[]);
+void bank_totals(int funds[], int player_count);
