@@ -132,6 +132,9 @@
   <ItemGroup>
     <None Include="funds.dat" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="comment_block.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

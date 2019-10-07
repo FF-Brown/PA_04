@@ -75,19 +75,15 @@ void game_rules(void)
 	printf("\nBlackjack dice is played with 2-5 people. It is primarily a game of chance but involves some strategy.\nPlayers take turns in order. On a player's turn, he/she rolls one six-sided die. They continue rolling until the sum of the rolls is greater than 21 or they choose to stop rolling. A player has the option to stop rolling after the roll sum reaches 16.\nA player wins by having the greatest sum of all players. However, if that value is greater than 21, that player loses. Therefore, it is a competition to see who can arrive the closest to 21 without going over. The game ends when all players have either gone over 21 or chosen to stop rolling.\n\nAt the beginning of their turn and once before each roll, players have the option to place bets. The amount they win is decided at the end of the game.\nIf a player rolls 21, they get 2x their total bet.\nIf a player has the highest roll in the group but did not roll 21 exactly, they get 1.5x their total bet.\nIf two players tie for highest roll, they both get only 1x their total bet.\nThose who lose the game also lose their bets.\n\nIn this version of the game, you have the option to save a record of each player's funds to continue the same game at a different time.\n");
 }
 /*
-	Function: funds_view()
+	Function: funds_saved_view()
 	Date Created: 10/02/2019
-	Last Modified:
+	Last Modified: 10/07/2019 Changed to saved_view only
 	Description: Retrieves data for player money from file, outputs to screen
 	Input parameters: None
 	Returns: None
 	Preconditions: File containing player data available but not open
 	Postconditions: Info output to screen
 */
-void funds_current_view(int funds[], int i)
-{
-	printf("$%d available.\n", funds[i]);
-}
 void funds_saved_view(void)
 {
 	int player1 = 0, player2 = 0, player3 = 0, player4 = 0, player5 = 0;
@@ -104,14 +100,28 @@ void funds_saved_view(void)
 	printf("Player 5: $%d\n", player5);
 }
 /*
-	Function: funds_reset()
-	Date Created: 10/02/2019
+	Function: funds_current_view
+	Date Created: 10/07/2019
 	Last Modified:
-	Description: Calls funds_view() and then gives option to reset player funds to default value.
-	Input parameters: None
+	Description: Outputs a single player's current funds to the screen
+	Input parameters: funds[] and i
 	Returns: None
-	Preconditions: Data file with player funds available but not open
-	Postconditions: Either funds reset or message displayed that they were not changed
+	Preconditions: funds[] and i available
+	Postconditions: Output printed to screen
+*/
+void funds_current_view(int funds[], int i)
+{
+	printf("$%d available.\n", funds[i]);
+}
+/*
+	Function: arr_reset()
+	Date Created: 10/02/2019
+	Last Modified: 10/07/2019 Changed to arr_reset() instead of funds_reset()
+	Description: Changes all values in funds[] to specified value
+	Input parameters: Any array arr[] and reset_value
+	Returns: None
+	Preconditions: Array available. Reset value chosen.
+	Postconditions: Array reset
 */
 void arr_reset(int arr[], int reset_value)
 {
@@ -121,6 +131,16 @@ void arr_reset(int arr[], int reset_value)
 	arr[3] = reset_value;
 	arr[4] = reset_value;
 }
+/*
+	Function: double_arr_reset()
+	Date Created: 10/06/2019
+	Last Modified: 
+	Description: Changes all values in funds[] to specified value
+	Input parameters: Any double array arr[] and reset_value
+	Returns: None
+	Preconditions: Array available. Reset value chosen.
+	Postconditions: Array reset
+*/
 void double_arr_reset(double arr[], int reset_value)
 {
 	arr[0] = reset_value;
@@ -133,11 +153,12 @@ void double_arr_reset(double arr[], int reset_value)
 	Function: funds_def()
 	Date Created: 10/01/2019
 	Last Modified: 10/02/2019 Nerfed due to conflicts
-	Description: Meant to allow player to change default value for player funds
+					10/06/2019 Fixed.
+	Description: Allows player to change default value for player funds
 	Input parameters: None
 	Returns: None
-	Preconditions: Default fund value set
-	Postconditions: Default fund value either changed or player changed their mind
+	Preconditions: None
+	Postconditions: Default fund value set
 */
 int funds_def(void)
 {
@@ -153,30 +174,14 @@ int funds_def(void)
 	return new_def;
 }
 /*
-	Function: funds_store()
-	Date Created: 10/01/2019
-	Last Modified: 10/02/2019 Began building
-	Description: Allows user to store game data at the end of a round to continue with the same info at a later date.
-	Input parameters: Player funds as integers
-	Returns: None
-	Preconditions: Fund values available for use
-	Postconditions: Fund values stored to player data file
-*/
-void funds_store(void)
-{
-	//Save values of current funds to file
-	return;
-}
-/*
 	Function: bet_initial()
 	Date Created: 10/01/2019
-	Last Modified:
+	Last Modified: 10/06/2019 No longer calls bet_check. No longer has input parameters.
 	Description: Accepts player's first bet. Mandatory.
-				 Calls bet_check to verify player has enough money.
-	Input parameters: Player (int)
+	Input parameters: None
 	Returns: Bet amount (int)
-	Preconditions: Turn begun, player specified
-	Postconditions: Bet logged
+	Preconditions: Turn begun, money in funds[]
+	Postconditions: Bet returned
 */
 int bet_initial(void)
 {
@@ -197,7 +202,7 @@ int bet_initial(void)
 	Description: Takes subsequent (after first roll) bets from player. Optional.
 	Input parameters: None
 	Returns: Bet value (int)
-	Preconditions: Player number established and available
+	Preconditions: Initial bet taken
 	Postconditions: Bet value returned
 */
 int bet_sub(void)
@@ -225,9 +230,9 @@ int bet_sub(void)
 	Date Created: 10/01/2019
 	Last Modified: 10/02/2019 Fleshed out
 	Description: Compares funds to bet to confirm that they have enough money to make a given bet.
-	Input parameters: Current bet and funds
+	Input parameters: Current bet and funds[i]
 	Returns: True/False
-	Preconditions: Player number established and available
+	Preconditions: Player number established and available. Bet available. Funds[] available
 	Postconditions: T/F returned
 */
 bool bet_check(int current_bet, int player_funds)
@@ -258,9 +263,10 @@ int roll_die(void)
 	Function: old_money()
 	Date Created: 10/01/2019
 	Last Modified: 10/03/2019
-	Description: Checks data file to see if funds have been changed. If so, asks player whether to use those values or reset them to the default value.
-	Input parameters: None
-	Returns: None
+					10/06-07/2019 Holy crap so much work. 
+	Description: Checks data file to see if funds have been changed. Asks player whether to retain save file. Acts based on answer. See further comments for more detail.
+	Input parameters: funds[]
+	Returns: y/n
 	Preconditions: Data file must exist but not be open.
 	Postconditions:	If player chooses, funds reset. Otherwise, no change made.
 */
@@ -319,11 +325,11 @@ char old_money(int funds[])
 	Function: game_intro()
 	Date Created: 10/01/2019
 	Last Modified: 10/02/2019 Fleshed out
-	Description: Begins the game. Checks to see if data file holds any values other than defaults. If so, asks user whether they want to use those values or not. Prompts for number of players.
+	Description: Begins the game. Prompts for number of players.
 	Input parameters: None
 	Returns: Number of players (int)
-	Preconditions: Data file exists for player funds but is not open
-	Postconditions: Player funds possibly reset to default. Number of players set for the course of the game.
+	Preconditions: None
+	Postconditions: Number of players set for the course of the game.
 */
 int game_intro(void)
 {
@@ -360,6 +366,16 @@ int max_roll(int rolls[])
 	}
 	return max;
 }
+/*
+	Function: roll_check()
+	Date Created: 10/07/2019
+	Last Modified:
+	Description: Responds to certain values of roll sums. Tells the player how much they've rolled.
+	Input parameters: rolls[] and i (1 lower than current player number)
+	Returns: y/n whether to continue rolling
+	Preconditions: Player has rolled
+	Postconditions: Responds with various messages depending on value. Determines whether to roll again.
+*/
 char roll_check(int rolls[], int i)
 {
 	char cont = 'y';
@@ -388,6 +404,16 @@ char roll_check(int rolls[], int i)
 		printf("You are at %d.\n", rolls[i]);
 	return cont;
 }
+/*
+	Function: multi()
+	Date Created: 10/07/2019
+	Last Modified:
+	Description: Assigns 0, 1.5, or 2 as multipliers for player's bet. Counts to determine if there has been a tie.
+	Input parameters: rolls[], multiplier[], max roll
+	Returns: Number of 'winners'
+	Preconditions: Game over. Max roll calculated
+	Postconditions: Multipliers assigned. Tie discerned.
+*/
 int multi(int rolls[], double multiplier[], int max)
 {
 	int winners = 0;
@@ -408,6 +434,16 @@ int multi(int rolls[], double multiplier[], int max)
 	}
 	return winners;
 }
+/*
+	Function: tie_fighter() Pun intended.
+	Date Created: 10/06/2019
+	Last Modified: 
+	Description: Acts if there has been a tie. Changes multipliers from 1.5 or 2 to 1. Alerts player to the tie. Ends the game.
+	Input parameters: multiplier[], tie[], bets[], funds[], winners, max roll
+	Returns: None
+	Preconditions: Game is over. Max calculated. Winners calculated. Multipliers assigned 0, 1.5, or 2.
+	Postconditions: All final values calculated.
+*/
 void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int winners, int max)
 {
 	int j = 0;
@@ -456,6 +492,16 @@ void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int wi
 	}
 	printf("All players who tied get their bets back but do not win any extra money.\n");
 }
+/*
+	Function: chicken_dinner() As in, "winner winner"
+	Date Created: 10/06/2019
+	Last Modified: 
+	Description: Triggered if only one winner. Game-ending calculations and announcements.
+	Input parameters: multiplier[], bets[], rolls[], funds[] (basically all player info arrays)
+	Returns: None
+	Preconditions: Game is over. Mulipliers, winners, and max rolls calculated.
+	Postconditions: Player alerted to win status. Winnings calculated.
+*/
 void chicken_dinner(double multiplier[], int bets[], int rolls[], int funds[])
 {
 	int winner = 0, winnings = 0;
@@ -475,6 +521,16 @@ void chicken_dinner(double multiplier[], int bets[], int rolls[], int funds[])
 	printf("Since you bet $%d, you win $%d!\n", bets[winner - 1], winnings);
 	funds[winner - 1] += winnings;
 }
+/*
+	Function: die_graphic()
+	Date Created: 10/06/2019
+	Last Modified:
+	Description: Displays the image of a die when player rolls
+	Input parameters: Roll value
+	Returns: None
+	Preconditions: Player has just rolled
+	Postconditions: Die displayed
+*/
 void die_graphic(int single_die)
 {
 	if (single_die == 6)
@@ -600,6 +656,16 @@ void die_graphic(int single_die)
 			*/
 	}
 }
+/*
+	Function: save_data()
+	Date Created: 10/07/2019
+	Last Modified:
+	Description: Allows player to save game data for a later rematch.
+	Input parameters: funds[]
+	Returns: None
+	Preconditions: Game is over, winner has been chosen and announced
+	Postconditions: DATA IS EITHER SAVED OR ALL OVERWRITTEN.
+*/
 void save_data(int funds[])
 {
 	int save = '\0';
@@ -627,6 +693,16 @@ void save_data(int funds[])
 	fclose(iofile);
 
 }
+/*
+	Function: bank_totals()
+	Date Created: 10/07/2019
+	Last Modified:
+	Description: Displays how much money players ended the game with
+	Input parameters: funds[]
+	Returns: None
+	Preconditions: Game over. Winnings calculated
+	Postconditions: All final total funds displayed.
+*/
 void bank_totals(int funds[])
 {
 	printf("\nFinal bank totals: \n");
