@@ -48,3 +48,4 @@ void tie_fighter(double multiplier[], int tie[], int bets[], int funds[], int wi
 void chicken_dinner(double multiplier[], int bets[], int rolls[], int funds[]);
 void die_graphic(int single_die);
 void save_data(int funds[]);
+void bank_totals(int funds[]);

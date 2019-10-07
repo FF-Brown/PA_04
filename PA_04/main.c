@@ -126,24 +126,7 @@ game_start:
 		chicken_dinner(multiplier, bets, rolls, funds);
 	
 	//Print final values of funds
-	printf("\nFinal bank totals: \n");
-	for (int i = 0; i < 5; i++)
-	{
-		//int player = 0;
-		printf("Player %d: ", i+1);
-		funds_current_view(funds, i);
-
-	}
-	//printf("Player 1: ");
-	//funds_current_view(funds, 0);
-	//printf("Player 2: ");
-	//funds_current_view(funds, 1);
-	//printf("Player 3: ");
-	//funds_current_view(funds, 2);
-	//printf("Player 4: ");
-	//funds_current_view(funds, 3);
-	//printf("Player 5: ");
-	//funds_current_view(funds, 4);
+	bank_totals(funds);
 
 	//Offer to save player funds to data file for next time	
 	save_data(funds);

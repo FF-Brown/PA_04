@@ -605,7 +605,7 @@ void save_data(int funds[])
 	int save = '\0';
 	while (save != 'y' && save != 'n')
 	{
-		printf("Would you like to save your data for later?\n");
+		printf("\nWould you like to save your data for later?\n");
 		scanf(" %c", &save);
 		if (save != 'y' && save != 'n') //In case typo
 			printf("Invalid entry.\n");
@@ -626,4 +626,14 @@ void save_data(int funds[])
 	}
 	fclose(iofile);
 
+}
+void bank_totals(int funds[])
+{
+	printf("\nFinal bank totals: \n");
+	for (int i = 0; i < 5; i++)
+	{
+		printf("Player %d: ", i + 1);
+		funds_current_view(funds, i);
+
+	}
 }
