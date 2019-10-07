@@ -669,7 +669,7 @@ void die_graphic(int single_die)
 */
 void save_data(int funds[])
 {
-	int save = '\0';
+	char save = '\0';
 	while (save != 'y' && save != 'n')
 	{
 		printf("\nWould you like to save your data for later? (y/n)\n");
