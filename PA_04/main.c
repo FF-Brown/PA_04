@@ -52,10 +52,11 @@ game_start:
 	money_reset = old_money(funds);
 
 	display_menu(funds);
-	if (funds[0] == -1)
-	{
-		starting_funds = funds_def();
-		arr_reset(funds, starting_funds);
+	//Probably unnecessary. Testing.......
+	//if (funds[0] == -1)
+	//{
+	//	starting_funds = funds_def();
+	//	arr_reset(funds, starting_funds);
 	}
 
 	player_count = game_intro();
@@ -132,25 +133,25 @@ game_start:
 	}
 
 
-	//Offer to save player funds to data file for next time
-	
+	//Offer to save player funds to data file for next time	
 	save = '\0';
 	while (save != 'y' && save != 'n')
 	{
 		printf("Would you like to save your data for later?\n");
 		scanf(" %c", &save);
-		if (save != 'y' && save != 'n')
+		if (save != 'y' && save != 'n') //In case typo
 			printf("Invalid entry.\n");
 	}
+
 	FILE* iofile = NULL;
 	iofile = fopen("funds.dat", "w");
-	if (save == 'y')
+	if (save == 'y') //If yes, save to file
 	{
 		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", funds[0], funds[1], funds[2], funds[3], funds[4]);
 		
 		printf("Player funds saved to file for next game.\n");
 	}
-	else if (save == 'n')
+	else if (save == 'n') //If no, overwrite file with -1
 	{
 		fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", -1, -1, -1, -1, -1);
 		arr_reset(funds, -1);

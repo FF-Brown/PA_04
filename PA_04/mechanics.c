@@ -270,34 +270,37 @@ char old_money(int funds[])
 	iofile = fopen("funds.dat", "r");
 	fscanf(iofile, "%d", &money_check);
 
-	//If any funds differ from default, prompt user to save or overwrite these values.
+	//If any funds differ from default (which is -1 to avoid confusion with case where Player 1 lost all their money and saved $0), prompt user to save or overwrite these values.
 	if (money_check < 0)
 	{
 		starting_funds = funds_def();
 		arr_reset(funds, starting_funds);
 	}
 
+	//Otherwise...
 	else if (money_check >=0)
 	{
-		while (option != 'y' && option != 'n')
+		while (option != 'y' && option != 'n') //Keep money from last game?
 		{
 			printf("Would you like to retain the funds from the end of your last game? (y/n)\n");
 			scanf(" %c", &option);
-			if (option != 'y' && option != 'n')
+			if (option != 'y' && option != 'n') //In case typo
 				printf("Invalid entry.\n");
 		}
-		if (option == 'y')
+		//If yes, import from file
+		if (option == 'y') 
 		{
-			if (funds[0] == -1)
+			for (int k = 0; k < 5; k++)
 			{
-				for (int k = 0; k < 5; k++)
-				{
-					fscanf(iofile, "%d", funds[k]);
-				}
+				fscanf(iofile, "%d", funds[k]);
 			}
 		}
+		//If no, reset all data
 		else if (option == 'n')
 		{
+			fprintf(iofile, "%d\n%d\n%d\n%d\n%d\n", -1, -1, -1, -1, -1);
+			arr_reset(funds, -1);
+			//And ask for new starting data
 			starting_funds = funds_def();
 			arr_reset(funds, starting_funds);
 		}
